@@ -38,6 +38,11 @@ interface FlowProps {
    * Callback function when the flow is saved
    */
   onSave?: () => void;
+  
+  /**
+   * Function to register the Flow component's save function with the parent
+   */
+  registerSaveFunction?: (saveFunction: () => boolean) => void;
 }
 
 /**
@@ -46,7 +51,7 @@ interface FlowProps {
  * @param {FlowProps} props - Component props
  * @returns {JSX.Element} Rendered flow component
  */
-const Flow: React.FC<FlowProps> = ({ onSave }) => {
+const Flow: React.FC<FlowProps> = ({ onSave, registerSaveFunction }) => {
   // Reference to the flow wrapper element
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
@@ -100,18 +105,43 @@ const Flow: React.FC<FlowProps> = ({ onSave }) => {
 
   /**
    * Handles saving the flow
+   * @returns {boolean} Whether the save was successful (validation passed)
    */
   const handleSave = useCallback(() => {
     if (reactFlowInstance) {
+      // Validation: If there are multiple nodes, check for nodes with empty target handles
+      if (nodes.length > 1) {
+        // Count nodes with empty target handles (no incoming connections)
+        const nodesWithEmptyTargets = nodes.filter((node) => {
+          return !edges.some((edge) => edge.target === node.id);
+        });
+        
+        // If more than one node has empty target handles, show error
+        if (nodesWithEmptyTargets.length > 1) {
+          toast.error(
+            'Error: Multiple nodes have no incoming connections. Only one node can be a starting point.',
+            {
+              position: 'top-right',
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            }
+          );
+          return false; // Validation failed, prevent saving
+        }
+      }
+
+      // If validation passes or not applicable, proceed with saving
       const flow = reactFlowInstance.toObject();
       localStorage.setItem('chatbotFlow', JSON.stringify(flow));
 
-      if (onSave) {
-        onSave();
-      } else {
-        // Use React-Toastify for notifications
+      // Show success toast when validation passes
+      // But don't show it if onSave is provided (to avoid duplicate toasts)
+      if (!onSave) {
         toast.success('Flow saved successfully!', {
-          position: "top-right",
+          position: 'top-right',
           autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -119,22 +149,12 @@ const Flow: React.FC<FlowProps> = ({ onSave }) => {
           draggable: true,
         });
       }
+      
+      return true; // Validation passed, save successful
     }
-  }, [reactFlowInstance, onSave]);
-
-  // Use the handleSave function when needed
-  React.useEffect(() => {
-    // Example: to set up keyboard shortcuts here
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
-        e.preventDefault();
-        handleSave();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleSave]);
+    
+    return false; // reactFlowInstance not available
+  }, [reactFlowInstance, onSave, nodes, edges]);
 
   /**
    * Handles drag over event for node creation
@@ -188,6 +208,16 @@ const Flow: React.FC<FlowProps> = ({ onSave }) => {
   // Define custom node and edge types
   const nodeTypes = React.useMemo(() => ({ textNode: TextNode }), []);
   const edgeTypes = React.useMemo(() => ({ custom: CustomEdge }), []);
+
+  // Register the save function with the parent component
+  React.useEffect(() => {
+    if (registerSaveFunction) {
+      registerSaveFunction(handleSave);
+    }
+  }, [registerSaveFunction, handleSave]);
+
+  // The keyboard shortcut for saving has been removed
+  // Save functionality is now only available through the navbar button
 
   return (
     <div className='flow-container' ref={reactFlowWrapper}>

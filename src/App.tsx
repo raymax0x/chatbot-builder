@@ -4,7 +4,7 @@
  * The root component of the Chatbot Builder application.
  * Orchestrates the layout and main components of the application.
  */
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -22,21 +22,39 @@ import './styles/index.css';
  * @returns {JSX.Element} Rendered application
  */
 const App: React.FC = () => {
+  // Reference to the Flow component's save function
+  const flowSaveFunctionRef = useRef<(() => boolean) | null>(null);
+
   /**
    * Handles saving the flow
+   * This delegates to the Flow component's save function to ensure validation is used
    */
   const handleSave = useCallback(() => {
-    // Flow component handles the actual save logic
-    // This function is called when the save button in Navbar is clicked
-    toast.success('Flow saved successfully!', {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
-    console.log('Save triggered from App component');
+    // Call the Flow component's save function if available
+    if (flowSaveFunctionRef.current) {
+      // Call the Flow component's save function, which handles validation
+      // The function returns a boolean indicating whether validation passed
+      const saveSuccessful = flowSaveFunctionRef.current();
+      
+      // Only show success toast if validation passed
+      if (saveSuccessful) {
+        toast.success('Flow saved successfully!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    }
+  }, []);
+
+  /**
+   * Callback to store the Flow component's save function
+   */
+  const registerFlowSaveFunction = useCallback((saveFunction: () => boolean) => {
+    flowSaveFunctionRef.current = saveFunction;
   }, []);
 
   return (
@@ -47,7 +65,7 @@ const App: React.FC = () => {
       {/* Main content area */}
       <div className='main-content'>
         {/* Flow canvas */}
-        <Flow onSave={handleSave} />
+        <Flow onSave={handleSave} registerSaveFunction={registerFlowSaveFunction} />
         
         {/* Sidebar with draggable nodes */}
         <Sidebar />
