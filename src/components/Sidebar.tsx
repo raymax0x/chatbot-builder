@@ -8,7 +8,7 @@ const Sidebar = () => {
 
   return (
     <aside className="sidebar">
-      <div className="description">You can drag this node to the pane on the right.</div>
+      <div className="description">Drag the message node below to create a new message in your chatbot flow.</div>
       <div className="dndnode input" onDragStart={(event) => onDragStart(event, 'textNode')} draggable>
         Message
       </div>
