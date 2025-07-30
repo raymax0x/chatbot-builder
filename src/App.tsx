@@ -148,45 +148,55 @@ const Flow = () => {
 
   return (
     <div className='app-container' ref={reactFlowWrapper}>
-      <div className='flow-container'>
-        <div className='save-button-wrapper'>
-          <button onClick={onSave}>Save Flow</button>
-        </div>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onInit={setReactFlowInstance}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          onSelectionChange={onSelectionChange}
-          fitView
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          defaultEdgeOptions={{
-            type: 'custom',
-            style: { strokeWidth: 2, stroke: '#333' },
-            markerEnd: {
-              type: MarkerType.ArrowClosed,
-              color: '#333',
-            },
-          }}
-        >
-          <Controls />
-          <Background />
-        </ReactFlow>
+      <div className='top-navbar'>
+        <div className='logo'>Chatbot Builder</div>
+        <button className='save-button' onClick={onSave}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+          Save Flow
+        </button>
       </div>
-      {selectedNode ? (
-        <SettingsPanel
-          selectedNode={selectedNode}
-          onNodeLabelChange={onNodeLabelChange}
-          onClearSelection={onClearSelection}
-        />
-      ) : (
-        <Sidebar />
-      )}
+      <div className='main-content'>
+        <div className='flow-container'>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onInit={setReactFlowInstance}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            onSelectionChange={onSelectionChange}
+            fitView
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            defaultEdgeOptions={{
+              type: 'custom',
+              style: { strokeWidth: 2, stroke: '#333' },
+              markerEnd: {
+                type: MarkerType.ArrowClosed,
+                color: '#333',
+              },
+            }}
+          >
+            <Controls />
+            <Background />
+          </ReactFlow>
+        </div>
+        {selectedNode ? (
+          <SettingsPanel
+            selectedNode={selectedNode}
+            onNodeLabelChange={onNodeLabelChange}
+            onClearSelection={onClearSelection}
+          />
+        ) : (
+          <Sidebar />
+        )}
+      </div>
     </div>
   );
 };
