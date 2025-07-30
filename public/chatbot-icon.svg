@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="248" fill="#4CAF50" />
+  
+  <!-- Robot Head -->
+  <rect x="136" y="136" width="240" height="200" rx="40" fill="#FFFFFF" />
+  
+  <!-- Robot Eyes -->
+  <circle cx="196" cy="196" r="24" fill="#333333" />
+  <circle cx="316" cy="196" r="24" fill="#333333" />
+  
+  <!-- Robot Antenna -->
+  <rect x="246" y="96" width="20" height="40" fill="#FFFFFF" />
+  <circle cx="256" cy="86" r="20" fill="#FFFFFF" />
+  
+  <!-- Robot Mouth -->
+  <rect x="176" y="256" width="160" height="20" rx="10" fill="#333333" />
+  
+  <!-- Chat Bubble -->
+  <path d="M376 296C376 287.163 383.163 280 392 280H432C440.837 280 448 287.163 448 296V356C448 364.837 440.837 372 432 372H412L396 392V372H392C383.163 372 376 364.837 376 356V296Z" fill="#FFFFFF" stroke="#333333" stroke-width="8" />
+  
+  <!-- Chat Bubble Dots -->
+  <circle cx="392" cy="326" r="6" fill="#333333" />
+  <circle cx="412" cy="326" r="6" fill="#333333" />
+  <circle cx="432" cy="326" r="6" fill="#333333" />
+</svg>
