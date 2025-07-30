@@ -22,7 +22,7 @@ let id = 0;
 const getId = () => `dndnode_${id++}`;
 
 const Flow = () => {
-  // No longer need selectedNode state since we're using inline editing
+
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -66,9 +66,7 @@ const Flow = () => {
 
   const nodeTypes = useMemo(() => ({ textNode: TextNode }), []);
   const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
-  // No longer need onClearSelection since we're using inline editing
 
-  // No longer need onSelectionChange since we're using inline editing
 
   const onConnect = useCallback(
     (params: Edge | Connection) => {
@@ -150,7 +148,7 @@ const Flow = () => {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [reactFlowInstance, setNodes]
+    [reactFlowInstance, setNodes, onNodeLabelChange]
   );
 
   return (
@@ -187,7 +185,7 @@ const Flow = () => {
             onInit={setReactFlowInstance}
             onDrop={onDrop}
             onDragOver={onDragOver}
-            // No longer need onSelectionChange
+
             fitView
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
