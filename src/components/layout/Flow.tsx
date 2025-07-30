@@ -1,9 +1,9 @@
 /**
  * Flow Component
- * 
+ *
  * A React component that renders the main ReactFlow canvas where the chatbot flow
  * is built and visualized. Handles node and edge interactions.
- * 
+ *
  * @component
  */
 import React, { useCallback, useRef } from 'react';
@@ -15,13 +15,9 @@ import ReactFlow, {
   MarkerType,
   Controls,
 } from 'reactflow';
-import type {
-  Node,
-  Edge,
-  Connection,
-  ReactFlowInstance
-} from 'reactflow';
+import type { Node, Edge, Connection, ReactFlowInstance } from 'reactflow';
 import 'reactflow/dist/style.css';
+import { toast } from 'react-toastify';
 
 // Import custom node and edge types
 import TextNode from '../nodes/TextNode';
@@ -46,49 +42,53 @@ interface FlowProps {
 
 /**
  * Flow component for the main ReactFlow canvas
- * 
+ *
  * @param {FlowProps} props - Component props
  * @returns {JSX.Element} Rendered flow component
  */
 const Flow: React.FC<FlowProps> = ({ onSave }) => {
   // Reference to the flow wrapper element
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  
+
   // State for nodes and edges
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  
+
   // Reference to the ReactFlow instance
-  const [reactFlowInstance, setReactFlowInstance] = React.useState<ReactFlowInstance | null>(null);
+  const [reactFlowInstance, setReactFlowInstance] =
+    React.useState<ReactFlowInstance | null>(null);
 
   /**
    * Handles updating a node's label
-   * 
+   *
    * @param {string} nodeId - ID of the node to update
    * @param {string} label - New label value
    */
-  const onNodeLabelChange = useCallback((nodeId: string, label: string) => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        if (node.id === nodeId) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              label,
-            },
-          };
-        }
-        return node;
-      })
-    );
-  }, [setNodes]);
+  const onNodeLabelChange = useCallback(
+    (nodeId: string, label: string) => {
+      setNodes((nds) =>
+        nds.map((node) => {
+          if (node.id === nodeId) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                label,
+              },
+            };
+          }
+          return node;
+        })
+      );
+    },
+    [setNodes]
+  );
 
   // Node creation is now handled directly in the onDrop function
 
   /**
    * Handles connecting two nodes
-   * 
+   *
    * @param {Edge | Connection} params - Connection parameters
    */
   const onConnect = useCallback(
@@ -105,32 +105,40 @@ const Flow: React.FC<FlowProps> = ({ onSave }) => {
     if (reactFlowInstance) {
       const flow = reactFlowInstance.toObject();
       localStorage.setItem('chatbotFlow', JSON.stringify(flow));
-      
+
       if (onSave) {
         onSave();
       } else {
-        alert('Flow saved successfully!');
+        // Use React-Toastify for notifications
+        toast.success('Flow saved successfully!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
       }
     }
   }, [reactFlowInstance, onSave]);
-  
+
   // Use the handleSave function when needed
   React.useEffect(() => {
-    // Example: You could set up keyboard shortcuts here
+    // Example: to set up keyboard shortcuts here
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 's') {
         e.preventDefault();
         handleSave();
       }
     };
-    
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleSave]);
 
   /**
    * Handles drag over event for node creation
-   * 
+   *
    * @param {React.DragEvent<HTMLDivElement>} event - Drag event
    */
   const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
@@ -140,7 +148,7 @@ const Flow: React.FC<FlowProps> = ({ onSave }) => {
 
   /**
    * Handles drop event for node creation
-   * 
+   *
    * @param {React.DragEvent<HTMLDivElement>} event - Drop event
    */
   const onDrop = useCallback(
@@ -159,16 +167,16 @@ const Flow: React.FC<FlowProps> = ({ onSave }) => {
         x: event.clientX,
         y: event.clientY,
       });
-      
+
       if (!position) return;
 
       const newNode: Node = {
         id: getId(),
         type,
         position,
-        data: { 
+        data: {
           label: `Text message`,
-          onLabelChange: onNodeLabelChange
+          onLabelChange: onNodeLabelChange,
         },
       };
 
@@ -212,7 +220,7 @@ const Flow: React.FC<FlowProps> = ({ onSave }) => {
 
 /**
  * FlowWithProvider component that wraps Flow with ReactFlowProvider
- * 
+ *
  * @param {FlowProps} props - Component props
  * @returns {JSX.Element} Rendered flow component with provider
  */

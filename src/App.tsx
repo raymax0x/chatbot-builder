@@ -1,10 +1,12 @@
 /**
  * Main App Component
- * 
+ *
  * The root component of the Chatbot Builder application.
  * Orchestrates the layout and main components of the application.
  */
 import React, { useCallback } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Import modular components
 import Navbar from './components/layout/Navbar';
@@ -16,7 +18,7 @@ import './styles/index.css';
 
 /**
  * App component - Main application container
- * 
+ *
  * @returns {JSX.Element} Rendered application
  */
 const App: React.FC = () => {
@@ -25,7 +27,15 @@ const App: React.FC = () => {
    */
   const handleSave = useCallback(() => {
     // Flow component handles the actual save logic
-    // This is just a pass-through function
+    // This function is called when the save button in Navbar is clicked
+    toast.success('Flow saved successfully!', {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
     console.log('Save triggered from App component');
   }, []);
 
@@ -42,6 +52,9 @@ const App: React.FC = () => {
         {/* Sidebar with draggable nodes */}
         <Sidebar />
       </div>
+      
+      {/* Toast container for notifications */}
+      <ToastContainer />
     </div>
   );
 };
