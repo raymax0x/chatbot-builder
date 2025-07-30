@@ -119,7 +119,7 @@ body,
   width: 250px;
   min-width: 250px;
   border-left: 1px solid #ddd;
-  padding: 15px;
+  padding: 15px 15px 15px 25px;
   background: #f7f7f7;
   height: 100%;
   overflow-y: auto;
@@ -255,10 +255,18 @@ body,
   transform: scale(1.05);
 }
 
-.settings-header-wrapper {
+.settings-panel {
   display: flex;
-  align-items: center;
-  margin-bottom: 20px;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-left: 1px solid #ddd;
+  padding: 15px 15px 15px 25px;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  width: 250px;
+  min-width: 250px;
 }
 
 .back-button {

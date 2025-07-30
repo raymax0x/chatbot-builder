@@ -24,7 +24,7 @@ const SettingsPanel = ({ selectedNode, onNodeLabelChange, onClearSelection }: Se
   };
   
   return (
-    <div>
+    <div className="settings-panel">
       <div className="settings-header-wrapper">
         <button onClick={onClearSelection} className="back-button">←</button>
         <h3 className="settings-header">Message Settings</h3>
