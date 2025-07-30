@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import ReactFlow, {
   Controls,
   Background,
@@ -30,7 +30,7 @@ const Flow = () => {
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
 
-  const onNodeLabelChange = (nodeId: string, label: string) => {
+  const onNodeLabelChange = useCallback((nodeId: string, label: string) => {
     setNodes((nds) =>
       nds.map((node) => {
         if (node.id === nodeId) {
@@ -47,7 +47,24 @@ const Flow = () => {
         return node;
       })
     );
-  };
+  }, [setNodes, selectedNode]);
+
+  // Create nodes with onLabelChange function
+  const createNodeWithData = useCallback(
+    (node: Node) => ({
+      ...node,
+      data: {
+        ...node.data,
+        onLabelChange: onNodeLabelChange,
+      },
+    }),
+    [onNodeLabelChange]
+  );
+
+  // Apply onLabelChange to all nodes
+  useEffect(() => {
+    setNodes((nds) => nds.map(createNodeWithData));
+  }, [createNodeWithData, setNodes]);
 
   const nodeTypes = useMemo(() => ({ textNode: TextNode }), []);
   const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);

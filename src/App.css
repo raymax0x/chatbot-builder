@@ -232,6 +232,29 @@ body,
   font-size: 14px;
   min-height: 40px;
   word-break: break-word;
+  cursor: text;
+}
+
+.text-node .node-content-edit {
+  width: calc(100% - 2px);
+  min-height: 40px;
+  max-height: 120px;
+  padding: 8px;
+  border: 1px solid #4ecdc4;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  background-color: white;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  margin: -8px 0;
+  box-sizing: border-box;
+}
+
+.text-node .node-content-edit:focus {
+  border-color: #4ecdc4;
+  box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.3);
 }
 
 .text-node .placeholder-text {

@@ -1,8 +1,11 @@
-import React, { memo } from 'react';
+import { memo, useState, useRef } from 'react';
 import { Handle, Position } from 'reactflow';
 import type { NodeProps } from 'reactflow';
 
-const TextNode = ({ data }: NodeProps<{ label: string }>) => {
+const TextNode = ({ data, id }: NodeProps<{ label: string; onLabelChange?: (nodeId: string, label: string) => void }>) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(data.label || '');
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   return (
     <div className='text-node'>
       <div className='node-header'>
@@ -35,8 +38,38 @@ const TextNode = ({ data }: NodeProps<{ label: string }>) => {
           </svg>
         </div>
       </div>
-      <div className='node-content'>
-        {data.label || <span className="placeholder-text">Enter message text...</span>}
+      <div className='node-content' onClick={() => {
+        if (!isEditing) {
+          setIsEditing(true);
+          setEditValue(data.label || '');
+        }
+      }}>
+        {isEditing ? (
+          <textarea
+            ref={inputRef}
+            className="node-content-edit"
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onBlur={() => {
+              setIsEditing(false);
+              if (data.onLabelChange) {
+                data.onLabelChange(id, editValue);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                setIsEditing(false);
+                if (data.onLabelChange) {
+                  data.onLabelChange(id, editValue);
+                }
+              }
+            }}
+            autoFocus
+          />
+        ) : (
+          data.label ? data.label : <span className="placeholder-text">Enter message text...</span>
+        )}
       </div>
       <Handle 
         type='source' 
