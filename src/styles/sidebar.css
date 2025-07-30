@@ -1,0 +1,72 @@
+/**
+ * Sidebar Styles
+ * Styling for the sidebar and draggable nodes
+ */
+
+/* Sidebar container */
+.sidebar {
+  width: 250px;
+  padding: 20px;
+  background-color: white;
+  border-right: 1px solid #eee;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+/* Sidebar description text */
+.sidebar .description {
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Draggable node in sidebar */
+.sidebar .dndnode {
+  height: 56px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+  font-weight: 600;
+  background: linear-gradient(135deg, #4ecdc4 0%, #2cb5e8 100%);
+  color: white;
+  box-shadow: 0 8px 16px rgba(78, 205, 196, 0.2);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+/* Shine effect for draggable node */
+.sidebar .dndnode::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+/* Hover effect for draggable node */
+.sidebar .dndnode:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(78, 205, 196, 0.3);
+}
+
+.sidebar .dndnode:hover::before {
+  left: 100%;
+}
+
+/* Active state for draggable node */
+.sidebar .dndnode:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 8px rgba(78, 205, 196, 0.2);
+}

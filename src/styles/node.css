@@ -1,0 +1,108 @@
+/**
+ * Node Styles
+ * Styling for flow nodes and their components
+ */
+
+/* Text node container */
+.text-node {
+  border: none;
+  border-radius: 12px;
+  background: white;
+  width: 240px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(78, 205, 196, 0.2);
+}
+
+/* Hover effect for text node */
+.text-node:hover {
+  box-shadow: 0 10px 28px rgba(78, 205, 196, 0.15);
+  transform: translateY(-3px);
+  border-color: rgba(78, 205, 196, 0.4);
+}
+
+/* Node header styling */
+.text-node .node-header {
+  background: linear-gradient(135deg, #4ecdc4 0%, #2cb5e8 100%);
+  color: white;
+  padding: 12px 16px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Header title container */
+.text-node .header-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Node content area */
+.text-node .node-content {
+  padding: 18px;
+  color: #333;
+  font-size: 14px;
+  min-height: 40px;
+  word-break: break-word;
+  cursor: text;
+  line-height: 1.5;
+  background-color: #fafafa;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* Inline text editing area */
+.text-node .node-content-edit {
+  width: calc(100% - 2px);
+  min-height: 40px;
+  max-height: 120px;
+  padding: 10px;
+  border: 2px solid #4ecdc4;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  background-color: white;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  margin: -8px 0;
+  box-sizing: border-box;
+  box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.1);
+  transition: all 0.2s ease;
+}
+
+/* Focus state for text editing area */
+.text-node .node-content-edit:focus {
+  border-color: #2cb5e8;
+  box-shadow: 0 0 0 4px rgba(44, 181, 232, 0.15);
+}
+
+/* WhatsApp icon in node header */
+.text-node .whatsapp-icon {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px);
+}
+
+/* Hover effect for WhatsApp icon */
+.text-node .whatsapp-icon:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

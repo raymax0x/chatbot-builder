@@ -1,0 +1,61 @@
+/**
+ * Flow Styles
+ * Styling for the ReactFlow container and its components
+ */
+
+/* Flow container */
+.flow-container {
+  flex: 1;
+  height: 100%;
+  background-color: #f8f8f8;
+}
+
+/* Custom edge styling */
+.custom-edge {
+  stroke: #333;
+  stroke-width: 2;
+  cursor: pointer;
+  transition: stroke-width 0.2s, stroke 0.2s;
+}
+
+.custom-edge:hover {
+  stroke-width: 3;
+  stroke: #4ecdc4;
+}
+
+/* ReactFlow controls customization */
+.react-flow__controls {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.react-flow__controls-button {
+  background-color: white;
+  border: none;
+  border-bottom: 1px solid #eee;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.react-flow__controls-button:hover {
+  background-color: #f0f0f0;
+}
+
+/* Custom styling for node handles */
+.react-flow__handle {
+  width: 8px;
+  height: 8px;
+  background-color: #4ecdc4;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.react-flow__handle:hover {
+  background-color: #2cb5e8;
+}
+
+/* Node selection styling */
+.react-flow__node.selected {
+  box-shadow: 0 0 0 2px #4ecdc4;
+}
