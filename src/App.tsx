@@ -12,7 +12,6 @@ import type { Node, Edge, Connection, ReactFlowInstance } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 import Sidebar from './components/Sidebar.tsx';
-import SettingsPanel from './components/SettingsPanel.tsx';
 import TextNode from './components/TextNode.tsx';
 import CustomEdge from './components/CustomEdge.tsx';
 import './App.css';
@@ -23,7 +22,7 @@ let id = 0;
 const getId = () => `dndnode_${id++}`;
 
 const Flow = () => {
-  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  // No longer need selectedNode state since we're using inline editing
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -34,54 +33,42 @@ const Flow = () => {
     setNodes((nds) =>
       nds.map((node) => {
         if (node.id === nodeId) {
-          const updatedNode = {
+          return {
             ...node,
             data: { ...node.data, label: label },
           };
-
-          if (selectedNode && selectedNode.id === nodeId) {
-            setSelectedNode(updatedNode);
-          }
-          return updatedNode;
         }
         return node;
       })
     );
-  }, [setNodes, selectedNode]);
+  }, [setNodes]);
 
   // Create nodes with onLabelChange function
   const createNodeWithData = useCallback(
-    (node: Node) => ({
-      ...node,
-      data: {
-        ...node.data,
-        onLabelChange: onNodeLabelChange,
-      },
-    }),
+    (node: Node) => {
+      // Preserve existing label if it exists
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          onLabelChange: onNodeLabelChange,
+        },
+      };
+    },
     [onNodeLabelChange]
   );
 
-  // Apply onLabelChange to all nodes
+  // Apply onLabelChange to all nodes only once when component mounts
   useEffect(() => {
     setNodes((nds) => nds.map(createNodeWithData));
-  }, [createNodeWithData, setNodes]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);  // Empty dependency array means this only runs once on mount
 
   const nodeTypes = useMemo(() => ({ textNode: TextNode }), []);
   const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
-  const onClearSelection = useCallback(() => {
-    setSelectedNode(null);
-  }, []);
+  // No longer need onClearSelection since we're using inline editing
 
-  const onSelectionChange = useCallback(
-    (params: { nodes: Node[]; edges: Edge[] }) => {
-      if (params.nodes.length === 1) {
-        setSelectedNode(params.nodes[0]);
-      } else {
-        setSelectedNode(null);
-      }
-    },
-    []
-  );
+  // No longer need onSelectionChange since we're using inline editing
 
   const onConnect = useCallback(
     (params: Edge | Connection) => {
@@ -155,7 +142,10 @@ const Flow = () => {
         id: getId(),
         type,
         position,
-        data: { label: `Text message` },
+        data: { 
+          label: `Text message`,
+          onLabelChange: onNodeLabelChange
+        },
       };
 
       setNodes((nds) => nds.concat(newNode));
@@ -197,7 +187,7 @@ const Flow = () => {
             onInit={setReactFlowInstance}
             onDrop={onDrop}
             onDragOver={onDragOver}
-            onSelectionChange={onSelectionChange}
+            // No longer need onSelectionChange
             fitView
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
@@ -214,15 +204,7 @@ const Flow = () => {
             <Background color='#ccc' style={{ backgroundColor: '#f8f8f8' }} />
           </ReactFlow>
         </div>
-        {selectedNode ? (
-          <SettingsPanel
-            selectedNode={selectedNode}
-            onNodeLabelChange={onNodeLabelChange}
-            onClearSelection={onClearSelection}
-          />
-        ) : (
-          <Sidebar />
-        )}
+        <Sidebar />
       </div>
     </div>
   );
