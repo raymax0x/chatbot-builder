@@ -6,6 +6,7 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   ReactFlowProvider,
+  MarkerType,
 } from 'reactflow';
 import type { Node, Edge, Connection, ReactFlowInstance } from 'reactflow';
 import 'reactflow/dist/style.css';
@@ -13,6 +14,7 @@ import 'reactflow/dist/style.css';
 import Sidebar from './components/Sidebar.tsx';
 import SettingsPanel from './components/SettingsPanel.tsx';
 import TextNode from './components/TextNode.tsx';
+import CustomEdge from './components/CustomEdge.tsx';
 import './App.css';
 
 const initialNodes: Node[] = [];
@@ -48,6 +50,7 @@ const Flow = () => {
   };
 
   const nodeTypes = useMemo(() => ({ textNode: TextNode }), []);
+  const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
   const onClearSelection = useCallback(() => {
     setSelectedNode(null);
   }, []);
@@ -66,16 +69,27 @@ const Flow = () => {
   const onConnect = useCallback(
     (params: Edge | Connection) => {
       setEdges((eds) => {
-        // Check if the target node already has an incoming connection
         const targetHasConnection = eds.some(
           (edge) => edge.target === params.target
         );
         if (targetHasConnection) {
-          // You could show an alert here if you want
-          // alert("Target node can only have one incoming connection.");
-          return eds; // Return existing edges without adding the new one
+          return eds;
         }
-        return addEdge(params, eds);
+        const edgeWithProperties = {
+          ...params,
+          type: 'custom',
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            width: 20,
+            height: 20,
+            color: '#333',
+          },
+          style: {
+            strokeWidth: 2,
+            stroke: '#333',
+          },
+        };
+        return addEdge(edgeWithProperties, eds);
       });
     },
     [setEdges]
@@ -150,6 +164,15 @@ const Flow = () => {
           onSelectionChange={onSelectionChange}
           fitView
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          defaultEdgeOptions={{
+            type: 'custom',
+            style: { strokeWidth: 2, stroke: '#333' },
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              color: '#333',
+            },
+          }}
         >
           <Controls />
           <Background />
