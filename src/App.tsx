@@ -1,35 +1,171 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useCallback, useRef, useMemo } from 'react';
+import ReactFlow, {
+  Controls,
+  Background,
+  addEdge,
+  useNodesState,
+  useEdgesState,
+  ReactFlowProvider,
+} from 'reactflow';
+import type { Node, Edge, Connection, ReactFlowInstance } from 'reactflow';
+import 'reactflow/dist/style.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+import Sidebar from './components/Sidebar.tsx';
+import SettingsPanel from './components/SettingsPanel.tsx';
+import TextNode from './components/TextNode.tsx';
+import './App.css';
+
+const initialNodes: Node[] = [];
+
+let id = 0;
+const getId = () => `dndnode_${id++}`;
+
+const Flow = () => {
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [reactFlowInstance, setReactFlowInstance] =
+    useState<ReactFlowInstance | null>(null);
+
+  const onNodeLabelChange = (nodeId: string, label: string) => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id === nodeId) {
+          return { ...node, data: { ...node.data, label } };
+        }
+        return node;
+      })
+    );
+  };
+
+  const nodeTypes = useMemo(() => ({ textNode: TextNode }), []);
+  const onClearSelection = useCallback(() => {
+    setSelectedNode(null);
+  }, []);
+
+  const onSelectionChange = useCallback(
+    (params: { nodes: Node[]; edges: Edge[] }) => {
+      if (params.nodes.length === 1) {
+        setSelectedNode(params.nodes[0]);
+      } else {
+        setSelectedNode(null);
+      }
+    },
+    []
+  );
+
+  const onConnect = useCallback(
+    (params: Edge | Connection) => {
+      setEdges((eds) => {
+        // Check if the target node already has an incoming connection
+        const targetHasConnection = eds.some(
+          (edge) => edge.target === params.target
+        );
+        if (targetHasConnection) {
+          // You could show an alert here if you want
+          // alert("Target node can only have one incoming connection.");
+          return eds; // Return existing edges without adding the new one
+        }
+        return addEdge(params, eds);
+      });
+    },
+    [setEdges]
+  );
+
+  const onSave = useCallback(() => {
+    if (!reactFlowInstance) {
+      return;
+    }
+
+    const flow = reactFlowInstance.toObject();
+    const nodesWithNoIncomingEdges = flow.nodes.filter(
+      (node) => !flow.edges.some((edge) => edge.target === node.id)
+    );
+
+    if (nodesWithNoIncomingEdges.length > 1) {
+      alert(
+        'Error: More than one node has no incoming connections. Please connect the nodes.'
+      );
+    } else {
+      alert('Flow saved successfully!');
+      console.log('Flow saved:', flow);
+    }
+  }, [reactFlowInstance]);
+
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const onDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+
+      const type = event.dataTransfer.getData('application/reactflow');
+
+      if (typeof type === 'undefined' || !type || !reactFlowInstance) {
+        return;
+      }
+
+      const position = reactFlowInstance.screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      const newNode: Node = {
+        id: getId(),
+        type,
+        position,
+        data: { label: `Text message` },
+      };
+
+      setNodes((nds) => nds.concat(newNode));
+    },
+    [reactFlowInstance, setNodes]
+  );
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className='app-container' ref={reactFlowWrapper}>
+      <div className='flow-container'>
+        <div className='save-button-wrapper'>
+          <button onClick={onSave}>Save Flow</button>
+        </div>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onInit={setReactFlowInstance}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onSelectionChange={onSelectionChange}
+          fitView
+          nodeTypes={nodeTypes}
+        >
+          <Controls />
+          <Background />
+        </ReactFlow>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      {selectedNode ? (
+        <SettingsPanel
+          selectedNode={selectedNode}
+          onNodeLabelChange={onNodeLabelChange}
+          onClearSelection={onClearSelection}
+        />
+      ) : (
+        <Sidebar />
+      )}
+    </div>
+  );
+};
+
+function App() {
+  return (
+    <ReactFlowProvider>
+      <Flow />
+    </ReactFlowProvider>
+  );
 }
 
-export default App
+export default App;
