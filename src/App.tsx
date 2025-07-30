@@ -32,7 +32,15 @@ const Flow = () => {
     setNodes((nds) =>
       nds.map((node) => {
         if (node.id === nodeId) {
-          return { ...node, data: { ...node.data, label } };
+          const updatedNode = {
+            ...node,
+            data: { ...node.data, label: label },
+          };
+
+          if (selectedNode && selectedNode.id === nodeId) {
+            setSelectedNode(updatedNode);
+          }
+          return updatedNode;
         }
         return node;
       })

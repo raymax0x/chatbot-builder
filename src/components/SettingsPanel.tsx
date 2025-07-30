@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import type { Node } from 'reactflow';
 
 interface SettingsPanelProps {
@@ -7,6 +8,21 @@ interface SettingsPanelProps {
 }
 
 const SettingsPanel = ({ selectedNode, onNodeLabelChange, onClearSelection }: SettingsPanelProps) => {
+  // Local state to track the input value
+  const [inputValue, setInputValue] = useState(selectedNode.data.label);
+  
+  // Update local state when selectedNode changes
+  useEffect(() => {
+    setInputValue(selectedNode.data.label);
+  }, [selectedNode.id, selectedNode.data.label]);
+  
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    onNodeLabelChange(selectedNode.id, newValue);
+  };
+  
   return (
     <div>
       <div className="settings-header-wrapper">
@@ -16,8 +32,10 @@ const SettingsPanel = ({ selectedNode, onNodeLabelChange, onClearSelection }: Se
       <label className="settings-label">Text</label>
       <textarea
         className="settings-textarea"
-        value={selectedNode.data.label}
-        onChange={(e) => onNodeLabelChange(selectedNode.id, e.target.value)}
+        value={inputValue}
+        onChange={handleInputChange}
+        placeholder="Enter message text..."
+        autoFocus
       />
     </div>
   );
