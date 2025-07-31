@@ -43,6 +43,16 @@ interface FlowProps {
    * Function to register the Flow component's save function with the parent
    */
   registerSaveFunction?: (saveFunction: () => boolean) => void;
+  
+  /**
+   * Callback function when a node is selected
+   */
+  onNodeSelect?: (node: Node | null) => void;
+  
+  /**
+   * Callback function to register the node update function
+   */
+  onUpdateNode?: (updateFunction: (nodeId: string, updates: Partial<{ label: string; [key: string]: unknown }>) => void) => void;
 }
 
 /**
@@ -51,7 +61,7 @@ interface FlowProps {
  * @param {FlowProps} props - Component props
  * @returns {JSX.Element} Rendered flow component
  */
-const Flow: React.FC<FlowProps> = ({ onSave, registerSaveFunction }) => {
+const Flow: React.FC<FlowProps> = ({ onSave, registerSaveFunction, onNodeSelect, onUpdateNode }) => {
   // Reference to the flow wrapper element
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
@@ -63,7 +73,56 @@ const Flow: React.FC<FlowProps> = ({ onSave, registerSaveFunction }) => {
   const [reactFlowInstance, setReactFlowInstance] =
     React.useState<ReactFlowInstance | null>(null);
 
+  /**
+   * Handle node selection
+   */
+  const handleNodeClick = useCallback(
+    (_event: React.MouseEvent, node: Node) => {
+      if (onNodeSelect) {
+        onNodeSelect(node);
+      }
+    },
+    [onNodeSelect]
+  );
 
+  /**
+   * Handle pane click (deselect nodes)
+   */
+  const handlePaneClick = useCallback(() => {
+    if (onNodeSelect) {
+      onNodeSelect(null);
+    }
+  }, [onNodeSelect]);
+
+  /**
+   * Handle node updates from settings panel
+   */
+  const handleNodeUpdate = useCallback(
+    (nodeId: string, updates: Partial<{ label: string; [key: string]: unknown }>) => {
+      setNodes((nds) =>
+        nds.map((node) => {
+          if (node.id === nodeId) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                ...updates,
+              },
+            };
+          }
+          return node;
+        })
+      );
+    },
+    [setNodes]
+  );
+
+  // Register the node update function with the parent component
+  React.useEffect(() => {
+    if (onUpdateNode) {
+      onUpdateNode(handleNodeUpdate);
+    }
+  }, [onUpdateNode, handleNodeUpdate]);
 
   // Node creation is now handled directly in the onDrop function
 
@@ -205,6 +264,8 @@ const Flow: React.FC<FlowProps> = ({ onSave, registerSaveFunction }) => {
         onInit={setReactFlowInstance}
         onDrop={onDrop}
         onDragOver={onDragOver}
+        onNodeClick={handleNodeClick}
+        onPaneClick={handlePaneClick}
         fitView
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}

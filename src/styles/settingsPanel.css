@@ -1,0 +1,180 @@
+/**
+ * Settings Panel Styles
+ * Modern, clean styling for the settings panel component
+ */
+
+.settings-panel {
+  width: 320px;
+  height: 100vh;
+  background-color: white;
+  border-left: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Header section */
+.settings-header {
+  background: linear-gradient(135deg, #4ecdc4 0%, #2cb5e8 100%);
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 18px;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateX(-2px);
+}
+
+.settings-title {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Content area */
+.settings-content {
+  flex: 1;
+  padding: 24px 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background-color: white;
+}
+
+.node-type-badge {
+  background: linear-gradient(135deg, #4ecdc4 0%, #2cb5e8 100%);
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 8px rgba(78, 205, 196, 0.2);
+}
+
+/* Setting sections */
+.setting-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.setting-label {
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+/* Text input container */
+.text-input-container {
+  position: relative;
+}
+
+.text-input {
+  width: 100%;
+  background: #fafafa;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  padding: 16px;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.text-input::placeholder {
+  color: #999;
+}
+
+.text-input:focus {
+  border-color: #4ecdc4;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+}
+
+.character-count {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  color: #999;
+  font-size: 11px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2px 6px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.setting-hint {
+  color: #666;
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Scrollbar styling */
+.settings-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.settings-content::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 3px;
+}
+
+.settings-content::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.settings-content::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .settings-panel {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+  }
+}
