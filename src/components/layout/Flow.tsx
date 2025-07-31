@@ -63,31 +63,7 @@ const Flow: React.FC<FlowProps> = ({ onSave, registerSaveFunction }) => {
   const [reactFlowInstance, setReactFlowInstance] =
     React.useState<ReactFlowInstance | null>(null);
 
-  /**
-   * Handles updating a node's label
-   *
-   * @param {string} nodeId - ID of the node to update
-   * @param {string} label - New label value
-   */
-  const onNodeLabelChange = useCallback(
-    (nodeId: string, label: string) => {
-      setNodes((nds) =>
-        nds.map((node) => {
-          if (node.id === nodeId) {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                label,
-              },
-            };
-          }
-          return node;
-        })
-      );
-    },
-    [setNodes]
-  );
+
 
   // Node creation is now handled directly in the onDrop function
 
@@ -196,13 +172,12 @@ const Flow: React.FC<FlowProps> = ({ onSave, registerSaveFunction }) => {
         position,
         data: {
           label: `Text message`,
-          onLabelChange: onNodeLabelChange,
         },
       };
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [reactFlowInstance, setNodes, onNodeLabelChange]
+    [reactFlowInstance, setNodes]
   );
 
   // Define custom node and edge types
